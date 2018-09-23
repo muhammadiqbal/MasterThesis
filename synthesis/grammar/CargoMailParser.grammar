@@ -1,0 +1,16 @@
+#reference 'file:cargoMail.cargoMailSemantics.dll';
+#reference 'file:cargoMail.cargoMailLearning.dll';
+using cargoMail;
+using cargoMail.cargoMailSemantics;
+using cargoMail.cargoMailLearning;
+using semantics cargoMail.cargoMailSemantics.cargoMailSemantics;
+using learners cargoMail.cargoMailLearning.cargoMailLearners;
+
+language cargoMail;
+
+@input string emailLine;
+
+@start string output := RegexMatch(emailLine,regex);
+
+
+

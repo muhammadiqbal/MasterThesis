@@ -1,0 +1,11 @@
+/home/iqbal/kuliah/masterThesis/POC/CargoMailParser/obj/Debug/netcoreapp2.1/CargoMailParser.csprojAssemblyReference.cache
+/home/iqbal/kuliah/masterThesis/POC/CargoMailParser/obj/Debug/netcoreapp2.1/CargoMailParser.csproj.CoreCompileInputs.cache
+/home/iqbal/kuliah/masterThesis/POC/CargoMailParser/obj/Debug/netcoreapp2.1/CargoMailParser.AssemblyInfoInputs.cache
+/home/iqbal/kuliah/masterThesis/POC/CargoMailParser/obj/Debug/netcoreapp2.1/CargoMailParser.AssemblyInfo.cs
+/home/iqbal/kuliah/masterThesis/POC/CargoMailParser/bin/Debug/netcoreapp2.1/CargoMailParser.deps.json
+/home/iqbal/kuliah/masterThesis/POC/CargoMailParser/bin/Debug/netcoreapp2.1/CargoMailParser.runtimeconfig.json
+/home/iqbal/kuliah/masterThesis/POC/CargoMailParser/bin/Debug/netcoreapp2.1/CargoMailParser.runtimeconfig.dev.json
+/home/iqbal/kuliah/masterThesis/POC/CargoMailParser/bin/Debug/netcoreapp2.1/CargoMailParser.dll
+/home/iqbal/kuliah/masterThesis/POC/CargoMailParser/bin/Debug/netcoreapp2.1/CargoMailParser.pdb
+/home/iqbal/kuliah/masterThesis/POC/CargoMailParser/obj/Debug/netcoreapp2.1/CargoMailParser.dll
+/home/iqbal/kuliah/masterThesis/POC/CargoMailParser/obj/Debug/netcoreapp2.1/CargoMailParser.pdb
