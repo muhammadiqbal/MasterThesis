@@ -9,6 +9,9 @@ namespace CargoMailParser
     {
         static void Main(string[] args)
         {
+
+            string pattern = @"/[\d(\,|\.)?\d]+\s?(tons|mt|ton|kg|kgs|dwt|mts|mtons)/gi";
+
             // List <Email> emails = DBHelper.RetrieveAllEmails(50);
             // //Console.WriteLine(email.Body);
             // Regex regex = new Regex("sample pattern");
@@ -25,9 +28,9 @@ namespace CargoMailParser
 
             //     Console.WriteLine("######################################\n");   
             // }
-            List<string> entities = null; 
-            Email email = DBHelper.retrieveEmail(50000);
-            var emailLines = email.Body.Split(new [] { '\r', '\n' });
+            // List<string> entities = null; 
+            // Email email = DBHelper.retrieveEmail(50000);
+            // var emailLines = email.Body.Split(new [] { '\r', '\n' });
             // foreach (var emailLine in emailLines)
             // {
             //     string classification = CmdExecutor.run_cmd("python3 classifier.py "+emailLine);
@@ -45,23 +48,36 @@ namespace CargoMailParser
             //     entities.Add();
             // }
             //DBHelper.InsertEmailLines();
-            MatchCollection result = null;
-            IEnumerable <Regex> regexdescription =PatternCargodescription();
-            foreach (var line in emailLines)
-            {
-                foreach (var regex in regexdescription)
-                {
-                    result = regex.Matches(line);
-                    foreach (var item in result)
-                    {
-                        Console.WriteLine("match :"+item);
-                    }
-                }
-            }           
+            // MatchCollection result = null;
+            // IEnumerable <Regex> regexdescription =PatternCargodescription();
+            // foreach (var line in emailLines)
+            // {
+            //     foreach (var regex in regexdescription)
+            //     {
+            //         result = regex.Matches(line);
+            //         foreach (var item in result)
+            //         {
+            //             Console.WriteLine("match :"+item);
+            //         }
+            //     }
+            // }           
             
-
-            
-
+            List<string> test= new List<string>();
+            test.Add("8/15,000 MT BULK MINERALS");
+            test.Add("10,000 MT BULK MINERALS");
+            test.Add("1 X  ABT  9,500 MT BULK MINERALS");
+            test.Add("1 X  ABT 10,000 MT BULK MINERALS");
+            test.Add("1 OR 2 LOTS OF 10,000 MT BULK MINERALS");
+            test.Add("50000 mts bagged UREA 50kg bags"); 
+            // foreach (var item in test)
+            // {
+            //     if(Regex.Match("8/15,000 MT BULK MINERALS", @"/(ABT)/gi").Success)
+            //     Console.WriteLine(Regex.Match(item, pattern).Value);
+            //     else{
+            //         Console.WriteLine(Regex.Match(item, pattern).Success);
+            //     }
+            // }
+            QuantityExtractor.extract(test);
         }
 
         

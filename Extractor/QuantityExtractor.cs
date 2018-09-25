@@ -1,28 +1,33 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text.RegularExpressions;
-using Microsoft.ProgramSynthesis.Extraction.Text;
-using Microsoft.ProgramSynthesis.Extraction.Text.Semantics;
-using Microsoft.ProgramSynthesis.Extraction.Text.Constraints;
 using Microsoft.ProgramSynthesis.DslLibrary;
+using Microsoft.ProgramSynthesis.Extraction.Text;
+using Microsoft.ProgramSynthesis.Extraction.Text.Constraints;
+using Microsoft.ProgramSynthesis.Learning;
 
-namespace CargoMailParser
+
+namespace CargoMailParser.Extractor
 {
     public static class QuantityExtractor 
     {
-        public static List<StringRegion> extract(List <StringRegion> inputlist)
+        public static void extract(List <string> inputlistString)
         {
             
-            SequenceSession SequenceSession = new SequenceSession();
-            Regex regexQuantity = new Regex("^(\\d*\\.)?\\d+\\s?+\\w((?i)tons|mt|ton|kg|kgs|dwt|mts|mtons(?-i))$");
-            
+            RegionSession RegionSession = new RegionSession();
+            string regexQuantity = @"[\d*(\.|\,)?\d*]+\s?(tons|mts|mt|ton|kg|kgs|dwt|mtons)";
 
-            string [] records = {"- QUANTITY : 25,000 MTS (BAGS 25KGS)",
-                "   15,000 mts +/- 10 % CAN (Axan)",
-                "   16,000 mts +/- 10 % CAN-27",
-                "   16,000 mts CAN-27",
-                "   5,100 mts min/max Nitrabor",
-                "   5,100 mts Nitrabor",
+            string [] records = {"- QUANTITY : 25,000 MTS (BAGS 25KGS)",//0
+                "15,000 mts +/- 10 % CAN (Axan)",//1
+                "16,000 mts +/- 10 % CAN-27",//2
+                "16,000 mts CAN-27",//3
+                "5,100 mts min/max Nitrabor",//4
+                "5,100 mts Nitrabor",//5
+                "6.5 tons",//6
+                "7 tons",//7
+                "- Qty : 15,000MT (+/-5% MOLCO)",//8
+                "7.5 tons",
                 "   6,600 mts +/- 10 % moloo NPK (19-04-19)",
                 "   6,600 mts NPK",
                 "   7,000 mts CAN (Axan)",
@@ -31,7 +36,7 @@ namespace CargoMailParser
                 "  9000 TONS MOMBASA",
                 "(2000mt for kwangyang, 3000mt for ulsan)",
                 "- 2500 TONS LOAD",
-                "- Qty : 15,000MT (+/-5% MOLCO)",
+                
                 "- Quantity: 20,00mt - 2 pct moloo calcined petcoke",
                 "- Q’ty: 2 lots x 41,000MT +/- 10% MOLOO",
                 "- Unit Weight 30.5 Tons.",
@@ -58,9 +63,6 @@ namespace CargoMailParser
                 "570 x 130 x 130 cm =  3 mt",
                 "5K TONS CORN",
                 "6 tons",
-                "6.5 tons",
-                "7 tons",
-                "7.5 tons",
                 "7000MTS, (basis 4cr x 30mts  min) / 12000MTS.",
                 "as p/c fr grd 25ts tng",
                 "Cargo quantity : 10.000 tons.",
@@ -177,21 +179,120 @@ namespace CargoMailParser
                 "Weight_1 : 41000",
                 "Weight_2 : 41000"};
         
-                StringRegion inputRegion = SequenceSession.CreateStringRegion(records[0]);
-                SequenceSession.Constraints.Add(
-                    new SequenceExample(inputRegion, new[] {
-                                inputRegion.Slice(13, 18), // input => "25,000"
-                                inputRegion.Slice(19, 22), // input => "MTS"
-                            })
-                );
-                SequenceProgram topRankedProg = SequenceSession.Learn();
-
-                List <StringRegion> results = new List<StringRegion>();
-                foreach (var result in topRankedProg.Run(inputlist))
+                StringRegion inputRegion = RegionSession.CreateStringRegion(records[0]);
+                StringRegion inputRegion2 = RegionSession.CreateStringRegion(records[1]);
+                StringRegion inputRegion3 = RegionSession.CreateStringRegion(records[2]);
+                StringRegion inputRegion4 = RegionSession.CreateStringRegion(records[3]);
+                StringRegion inputRegion5 = RegionSession.CreateStringRegion(records[4]);
+                StringRegion inputRegion6 = RegionSession.CreateStringRegion(records[5]);
+                StringRegion inputRegion7 = RegionSession.CreateStringRegion(records[6]);
+                StringRegion inputRegion8 = RegionSession.CreateStringRegion(records[7]);
+                StringRegion inputRegion9 = RegionSession.CreateStringRegion(records[8]);
+                StringRegion inputRegion10 = RegionSession.CreateStringRegion(records[9]);
+                Console.WriteLine(inputRegion.Slice(13, 23));
+                Console.WriteLine(inputRegion2.Slice(0, 11));
+                Console.WriteLine(inputRegion3.Slice(0, 11));
+                IEnumerable<Match> matches = Regex.Matches(@"- QUANTITY : 25,000 MTS (BAGS 25KGS)",regexQuantity,RegexOptions.IgnoreCase);
+                foreach (var match in matches)
                 {
-                    results.Add(result);
+                    Console.WriteLine(match.Value);
                 }
-                 return results;
+                var examples =new[]{ 
+                   new RegionExample(inputRegion,inputRegion.Slice(14, 23)),
+                   new RegionExample(inputRegion2,inputRegion2.Slice(1, 11)),
+                   new RegionExample(inputRegion3,inputRegion3.Slice(1, 11)),
+                };
+                // RegionSession.Constraints.Add(
+                //     new RegionExample(inputRegion2, new[] {
+                //                 inputRegion2.Slice(1, 6), // input => "25,000"
+                //                 inputRegion2.Slice(8, 11), // input => "MTS"
+                //             })
+                // );
+                // RegionSession.Constraints.Add(
+                //     new RegionExample(inputRegion3, new[] {
+                //                 inputRegion3.Slice(1, 6), // input => "25,000"
+                //                 inputRegion3.Slice(8, 11), // input => "MTS"
+                //             })
+                // );
+                // RegionSession.Constraints.Add(
+                //     new RegionExample(inputRegion4, new[] {
+                //                 inputRegion4.Slice(1, 6), // input => "25,000"
+                //                 inputRegion4.Slice(8, 11), // input => "MTS"
+                //             })
+                // );
+                // RegionSession.Constraints.Add(
+                //     new RegionExample(inputRegion5, new[] {
+                //                 inputRegion5.Slice(1, 5), // input => "25,000"
+                //                 inputRegion5.Slice(7, 10), // input => "MTS"
+                //             })
+                // );
+                // RegionSession.Constraints.Add(
+                //     new RegionExample(inputRegion6, new[] {
+                //                 inputRegion6.Slice(1, 5), // input => "25,000"
+                //                 inputRegion6.Slice(7, 10), // input => "MTS"
+                //             })
+                // );
+                // RegionSession.Constraints.Add(
+                //     new RegionExample(inputRegion7, new[] {
+                //                 inputRegion7.Slice(1, 3), // input => "25,000"
+                //                 inputRegion7.Slice(5, 8), // input => "MTS"
+                //             })
+                // );
+                // RegionSession.Constraints.Add(
+                //     new RegionExample(inputRegion8, new[] {
+                //                 inputRegion8.Slice(1, 1), // input => "25,000"
+                //                 inputRegion8.Slice(3, 6), // input => "MTS"
+                //             })
+                // );
+                // RegionSession.Constraints.Add(
+                //     new RegionExample(inputRegion9, new[] {
+                 
+                //                 inputRegion9.Slice(9, 14), // input => "25,000"
+                //                 inputRegion9.Slice(15, 16), // input => "MTS"
+                //             })
+                // );
+                //IEnumerable<RegionProgram> topRankedPrograms = RegionLearner.Instance.LearnTopK(RegionExample, null, 1, regexQuantity);;
+
+                // if ( RegionSession.Learn()!= null)
+                // {
+                //     Console.WriteLine(RegionSession.Learn());
+                // }
+               
+                // List <StringRegion> inputlist =new List<StringRegion> ();
+               
+                // foreach (var input in inputlistString)
+                // {
+                //     inputlist.Add(RegionSession.CreateStringRegion(input));
+                // }
+                
+                // foreach (var result in topRankedProg.Run(inputlist))
+                // {
+                //     foreach (var item in result)
+                //     {
+                //         Console.WriteLine(item);
+                //     }
+                // }
+                IEnumerable<RegionProgram> topRankedPrograms = RegionLearner.Instance.LearnTopK(examples, 
+                                                                                            RegionLearner.Instance.ScoreFeature,
+                                                                                            1,
+                                                                                            null,
+                                                                                            default(ProgramSamplingStrategy),
+                                                                                            null,
+                                                                                            new Regex(regexQuantity)).TopPrograms;
+                RegionProgram topRankedProg = topRankedPrograms.FirstOrDefault();
+                if (topRankedProg == null)
+                {
+                    Console.Error.WriteLine("Error: Learning fails!");
+                    return;
+                }
+
+                foreach (string input in inputlistString)
+                {
+                    StringRegion inputStringRegion = RegionSession.CreateStringRegion(input); 
+                    string output = topRankedProg.Run(inputStringRegion)?.Value ?? "null";
+                    Console.WriteLine("\"{0}\" => \"{1}\"", inputStringRegion, output);
+                }
+                return;
 
         }
     }
